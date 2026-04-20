@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CDReq — Licence d'un composant open-source</title>
+<style>
+  :root {
+    --bg: #f7f8fa;
+    --card: #ffffff;
+    --text: #1f2328;
+    --muted: #57606a;
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --border: #d0d7de;
+    --ok: #1a7f37;
+    --warn: #9a6700;
+    --err: #cf222e;
+    --code-bg: #f1f3f5;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px 16px;
+    min-height: 100vh;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 32px;
+    max-width: 680px;
+  }
+  h1 {
+    font-size: 2.4rem;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    letter-spacing: -0.02em;
+  }
+  header p {
+    color: var(--muted);
+    margin: 0;
+    line-height: 1.5;
+  }
+  form {
+    width: 100%;
+    max-width: 680px;
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  input[type="text"] {
+    flex: 1;
+    padding: 14px 18px;
+    font-size: 1rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--card);
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  input[type="text"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  }
+  button {
+    padding: 0 22px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+    background: var(--accent);
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  button:hover { background: var(--accent-hover); }
+  button:disabled { background: #9ca3af; cursor: not-allowed; }
+  .examples {
+    width: 100%;
+    max-width: 680px;
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  .examples code {
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+  }
+  .examples code:hover { background: #e5e7eb; }
+  main {
+    width: 100%;
+    max-width: 860px;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .card h2 {
+    margin: 0 0 16px 0;
+    font-size: 1.15rem;
+    font-weight: 600;
+  }
+  .row {
+    display: flex;
+    padding: 8px 0;
+    border-bottom: 1px solid #eaecef;
+  }
+  .row:last-child { border-bottom: none; }
+  .row .label {
+    flex: 0 0 200px;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  .row .value {
+    flex: 1;
+    font-size: 0.95rem;
+    word-break: break-word;
+  }
+  .license-pill {
+    display: inline-block;
+    padding: 4px 10px;
+    background: #ddf4ff;
+    color: #0969da;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin: 2px 4px 2px 0;
+  }
+  .license-declared {
+    background: #dafbe1;
+    color: var(--ok);
+    font-size: 1rem;
+    padding: 6px 14px;
+  }
+  .license-noassertion {
+    background: #ffebe9;
+    color: var(--err);
+  }
+  .loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 32px;
+    color: var(--muted);
+  }
+  .spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid #e5e7eb;
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .error {
+    background: #ffebe9;
+    border-color: #ffcecb;
+    color: var(--err);
+  }
+  .coords {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    background: var(--code-bg);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    word-break: break-all;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  details summary {
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 0.9rem;
+    user-select: none;
+  }
+  details pre {
+    background: var(--code-bg);
+    padding: 12px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 0.8rem;
+    max-height: 400px;
+  }
+  footer {
+    margin-top: 40px;
+    color: var(--muted);
+    font-size: 0.8rem;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+  <header>
+    <h1>CDReq</h1>
+    <p>Entrez un <strong>pURL</strong> ou l'URL GitHub d'un composant open-source pour obtenir ses informations de licence via <a href="https://clearlydefined.io" target="_blank" rel="noopener">ClearlyDefined</a>.</p>
+  </header>
+
+  <form id="search-form">
+    <input type="text" id="query" placeholder="pkg:npm/react@18.2.0 ou https://github.com/facebook/react" autocomplete="off" autofocus required />
+    <button type="submit" id="submit-btn">Rechercher</button>
+  </form>
+
+  <div class="examples">
+    Exemples :
+    <code data-ex="pkg:npm/react@18.2.0">pkg:npm/react@18.2.0</code>
+    <code data-ex="pkg:pypi/requests@2.31.0">pkg:pypi/requests@2.31.0</code>
+    <code data-ex="pkg:maven/org.apache.commons/commons-lang3@3.14.0">pkg:maven/…/commons-lang3@3.14.0</code>
+    <code data-ex="https://github.com/facebook/react">https://github.com/facebook/react</code>
+  </div>
+
+  <main id="result"></main>
+
+  <footer>
+    Données fournies par <a href="https://clearlydefined.io" target="_blank" rel="noopener">ClearlyDefined</a>.
+    Logique de conversion PURL → coordonnées inspirée de
+    <a href="https://github.com/OpenRailAssociation/purl-tools" target="_blank" rel="noopener">purl-tools</a>.
+  </footer>
+
+<script>
+"use strict";
+
+/* =========================================================================
+ * PURL parsing (subset of the purl spec, sufficient for our needs)
+ * Reference: https://github.com/package-url/purl-spec
+ * ========================================================================= */
+function parsePurl(purl) {
+  if (!purl.startsWith("pkg:")) throw new Error("Un PURL doit commencer par 'pkg:'");
+  let rest = purl.slice(4).replace(/^\/+/, "");
+
+  // Strip subpath
+  const hashIdx = rest.indexOf("#");
+  if (hashIdx !== -1) rest = rest.slice(0, hashIdx);
+  // Strip qualifiers
+  let qualifiers = {};
+  const qIdx = rest.indexOf("?");
+  if (qIdx !== -1) {
+    const qStr = rest.slice(qIdx + 1);
+    rest = rest.slice(0, qIdx);
+    for (const kv of qStr.split("&")) {
+      if (!kv) continue;
+      const [k, v = ""] = kv.split("=");
+      qualifiers[decodeURIComponent(k).toLowerCase()] = decodeURIComponent(v);
+    }
+  }
+
+  // type / rest
+  const slashIdx = rest.indexOf("/");
+  if (slashIdx === -1) throw new Error("PURL invalide : type manquant");
+  const type = rest.slice(0, slashIdx).toLowerCase();
+  let tail = rest.slice(slashIdx + 1);
+
+  // name@version at the end
+  let version = "";
+  const atIdx = tail.lastIndexOf("@");
+  if (atIdx !== -1) {
+    version = decodeURIComponent(tail.slice(atIdx + 1));
+    tail = tail.slice(0, atIdx);
+  }
+
+  const parts = tail.split("/").filter(Boolean).map(decodeURIComponent);
+  if (parts.length === 0) throw new Error("PURL invalide : nom manquant");
+  const name = parts.pop();
+  const namespace = parts.length ? parts.join("/") : "";
+
+  return { type, namespace, name, version, qualifiers };
+}
+
+/* =========================================================================
+ * URL -> PURL (GitHub / GitLab / Bitbucket)
+ * ========================================================================= */
+function urlToPurl(input) {
+  let u;
+  try { u = new URL(input); } catch { return null; }
+  const host = u.hostname.toLowerCase().replace(/^www\./, "");
+  const segs = u.pathname.split("/").filter(Boolean);
+
+  const gitHosts = {
+    "github.com": "github",
+    "gitlab.com": "gitlab",
+    "bitbucket.org": "bitbucket",
+  };
+  if (gitHosts[host] && segs.length >= 2) {
+    const owner = segs[0];
+    let repo = segs[1].replace(/\.git$/, "");
+    let ref = "";
+    // /tree/<ref>, /commit/<sha>, /releases/tag/<tag>
+    if (segs.length >= 4) {
+      if (segs[2] === "tree" || segs[2] === "commit") ref = segs[3];
+      else if (segs[2] === "releases" && segs[3] === "tag" && segs[4]) ref = segs[4];
+    }
+    let purl = `pkg:${gitHosts[host]}/${owner}/${repo}`;
+    if (ref) purl += `@${encodeURIComponent(ref)}`;
+    return purl;
+  }
+
+  // npm: https://www.npmjs.com/package/<name> or /package/@scope/name
+  if (host === "npmjs.com" && segs[0] === "package" && segs.length >= 2) {
+    let name, version = "";
+    if (segs[1].startsWith("@") && segs.length >= 3) {
+      name = `${segs[1]}/${segs[2]}`;
+      if (segs[3] === "v" && segs[4]) version = segs[4];
+    } else {
+      name = segs[1];
+      if (segs[2] === "v" && segs[3]) version = segs[3];
+    }
+    return `pkg:npm/${name}${version ? `@${version}` : ""}`;
+  }
+
+  // PyPI: https://pypi.org/project/<name>/<version>/
+  if (host === "pypi.org" && segs[0] === "project" && segs.length >= 2) {
+    const name = segs[1];
+    const version = segs[2] || "";
+    return `pkg:pypi/${name}${version ? `@${version}` : ""}`;
+  }
+
+  // crates.io: https://crates.io/crates/<name>/<version>
+  if (host === "crates.io" && segs[0] === "crates" && segs.length >= 2) {
+    return `pkg:cargo/${segs[1]}${segs[2] ? `@${segs[2]}` : ""}`;
+  }
+
+  // RubyGems: https://rubygems.org/gems/<name>/versions/<version>
+  if (host === "rubygems.org" && segs[0] === "gems" && segs.length >= 2) {
+    let version = "";
+    if (segs[2] === "versions" && segs[3]) version = segs[3];
+    return `pkg:gem/${segs[1]}${version ? `@${version}` : ""}`;
+  }
+
+  // NuGet: https://www.nuget.org/packages/<name>/<version>
+  if (host === "nuget.org" && segs[0] === "packages" && segs.length >= 2) {
+    return `pkg:nuget/${segs[1]}${segs[2] ? `@${segs[2]}` : ""}`;
+  }
+
+  return null;
+}
+
+/* =========================================================================
+ * PURL -> ClearlyDefined coordinates
+ * Mirrors the logic from OpenRailAssociation/purl-tools (purl2cd.py)
+ * ========================================================================= */
+function isSha1(s) { return /^[0-9a-f]{40}$/i.test(s); }
+
+const TYPE_HANDLERS = {
+  cocoapods: (_p, c) => { c.type = "pod"; c.provider = "cocoapods"; return c; },
+  cargo:     (_p, c) => { c.type = "crate"; c.provider = "cratesio"; return c; },
+  composer:  (_p, c) => { c.type = "composer"; c.provider = "packagist"; return c; },
+  conda: (p, c) => {
+    c.type = "conda";
+    const q = p.qualifiers || {};
+    const channelMap = { main: "anaconda-main", "conda-forge": "conda-forge", "anaconda-r": "anaconda-r" };
+    c.provider = channelMap[q.channel] || "UNSUPPORTED_CHANNEL";
+    c.namespace = q.subdir || "MISSING_SUBDIR";
+    if (q.build && p.version) c.revision = `${p.version}-${q.build}`;
+    return c;
+  },
+  deb: (p, c) => {
+    const arch = (p.qualifiers || {}).arch;
+    if (arch === "source") { c.type = "debsrc"; c.revision = p.version || ""; }
+    else { c.type = "deb"; c.revision = arch ? `${p.version}_${arch}` : (p.version || ""); }
+    c.provider = "debian";
+    c.namespace = "-";
+    return c;
+  },
+  gem:       (_p, c) => { c.type = "gem"; c.provider = "rubygems"; return c; },
+  github:    (p, c) => handleGit(p, c, "github"),
+  gitlab:    (p, c) => handleGit(p, c, "gitlab"),
+  bitbucket: (p, c) => handleGit(p, c, "bitbucket"),
+  golang: (p, c) => {
+    c.type = "go";
+    c.provider = "golang";
+    c.namespace = c.namespace.replace(/\//g, "%2f");
+    c.revision = p.version ? `v${p.version}` : "";
+    return c;
+  },
+  maven: (p, c) => {
+    c.type = "maven";
+    const ns = p.namespace || "";
+    if (ns.includes("android")) c.provider = "mavengoogle";
+    else if ((p.name || "").toLowerCase().includes("gradle")) c.provider = "gradleplugin";
+    else c.provider = "mavencentral";
+    return c;
+  },
+  npm:    (_p, c) => { c.type = "npm"; c.provider = "npmjs"; return c; },
+  nuget:  (_p, c) => { c.type = "nuget"; c.provider = "nuget"; return c; },
+  pypi:   (_p, c) => { c.type = "pypi"; c.provider = "pypi"; return c; },
+};
+
+function handleGit(p, c, provider) {
+  c.type = "git";
+  c.provider = provider;
+  // version/revision resolution (tag -> commit SHA) is handled async before calling this
+  return c;
+}
+
+function initCoords(p) {
+  return {
+    type: "",
+    provider: "",
+    namespace: p.namespace ? p.namespace : "-",
+    name: p.name,
+    revision: p.version || "",
+  };
+}
+
+function purlToCdCoords(purl) {
+  const p = parsePurl(purl);
+  const handler = TYPE_HANDLERS[p.type];
+  if (!handler) throw new Error(`Type de package non supporté : ${p.type}`);
+  let coords = initCoords(p);
+  coords = handler(p, coords);
+  return { parsed: p, coords };
+}
+
+function buildCoordString(c) {
+  return `${c.type}/${c.provider}/${c.namespace}/${c.name}/${c.revision}`;
+}
+
+/* =========================================================================
+ * GitHub helpers (tag -> commit SHA, default tag lookup)
+ * ========================================================================= */
+async function githubResolveTagToSha(owner, repo, tag) {
+  const tryTag = async (t) => {
+    const r = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/ref/tags/${encodeURIComponent(t)}`);
+    if (!r.ok) return null;
+    const data = await r.json();
+    if (data.object && data.object.type === "tag") {
+      const tr = await fetch(data.object.url);
+      if (!tr.ok) return null;
+      const td = await tr.json();
+      return td.object && td.object.sha ? td.object.sha : null;
+    }
+    return data.object ? data.object.sha : null;
+  };
+  let sha = await tryTag(tag);
+  if (!sha && !tag.startsWith("v")) sha = await tryTag(`v${tag}`);
+  return sha;
+}
+
+async function githubLatestRef(owner, repo) {
+  // Prefer latest release, fall back to first tag, fall back to default branch HEAD
+  try {
+    const r = await fetch(`https://api.github.com/repos/${owner}/${repo}/releases/latest`);
+    if (r.ok) {
+      const d = await r.json();
+      if (d.tag_name) return { tag: d.tag_name };
+    }
+  } catch {}
+  try {
+    const r = await fetch(`https://api.github.com/repos/${owner}/${repo}/tags?per_page=1`);
+    if (r.ok) {
+      const d = await r.json();
+      if (Array.isArray(d) && d.length && d[0].name) {
+        return { tag: d[0].name, sha: d[0].commit && d[0].commit.sha };
+      }
+    }
+  } catch {}
+  try {
+    const r = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
+    if (r.ok) {
+      const d = await r.json();
+      if (d.default_branch) {
+        const br = await fetch(`https://api.github.com/repos/${owner}/${repo}/branches/${d.default_branch}`);
+        if (br.ok) {
+          const bd = await br.json();
+          if (bd.commit && bd.commit.sha) return { sha: bd.commit.sha };
+        }
+      }
+    }
+  } catch {}
+  return null;
+}
+
+/* =========================================================================
+ * Full resolution: input string -> coordinates string
+ * ========================================================================= */
+async function resolve(input) {
+  const trimmed = input.trim();
+  if (!trimmed) throw new Error("Saisie vide");
+
+  // Either PURL or URL
+  let purl;
+  if (trimmed.startsWith("pkg:")) {
+    purl = trimmed;
+  } else {
+    const converted = urlToPurl(trimmed);
+    if (!converted) throw new Error("URL non reconnue. Fournissez un PURL ou une URL GitHub/GitLab/Bitbucket/npm/PyPI/crates.io/RubyGems/NuGet.");
+    purl = converted;
+  }
+
+  const { parsed, coords } = purlToCdCoords(purl);
+
+  // Git repos: must have a commit SHA for revision
+  if (coords.type === "git") {
+    const owner = parsed.namespace;
+    const repo = parsed.name;
+    if (!owner) throw new Error("Propriétaire (owner) manquant pour le dépôt Git");
+    let ref = parsed.version;
+
+    if (!ref) {
+      const latest = await githubLatestRef(owner, repo);
+      if (!latest) throw new Error("Impossible de déterminer une révision pour ce dépôt.");
+      if (latest.sha && isSha1(latest.sha)) coords.revision = latest.sha.toLowerCase();
+      else if (latest.tag) {
+        const sha = await githubResolveTagToSha(owner, repo, latest.tag);
+        if (!sha) throw new Error(`Impossible de résoudre le tag ${latest.tag} en SHA de commit.`);
+        coords.revision = sha.toLowerCase();
+      }
+    } else if (isSha1(ref)) {
+      coords.revision = ref.toLowerCase();
+    } else {
+      const sha = await githubResolveTagToSha(owner, repo, ref);
+      if (!sha) throw new Error(`Impossible de résoudre la référence "${ref}" en SHA de commit.`);
+      coords.revision = sha.toLowerCase();
+    }
+  }
+
+  if (!coords.revision) {
+    throw new Error("Aucune version/révision trouvée. Ajoutez une version au PURL (p. ex. @1.0.0).");
+  }
+
+  const coordString = buildCoordString(coords);
+  return { purl, coords, coordString, parsed };
+}
+
+/* =========================================================================
+ * ClearlyDefined API
+ * ========================================================================= */
+async function fetchDefinition(coordString) {
+  const url = `https://api.clearlydefined.io/definitions/${coordString}`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`ClearlyDefined a répondu ${r.status} ${r.statusText}`);
+  return r.json();
+}
+
+/* =========================================================================
+ * Rendering
+ * ========================================================================= */
+const resultEl = document.getElementById("result");
+
+function esc(s) {
+  return String(s ?? "").replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[c]));
+}
+
+function licensePill(lic) {
+  if (!lic) return '<span class="license-pill license-noassertion">Aucune</span>';
+  const isNone = /NOASSERTION|NONE/i.test(lic);
+  const cls = isNone ? "license-pill license-noassertion" : "license-pill";
+  return `<span class="${cls}">${esc(lic)}</span>`;
+}
+
+function renderLoading(msg) {
+  resultEl.innerHTML = `<div class="card loader"><div class="spinner"></div><div>${esc(msg)}</div></div>`;
+}
+
+function renderError(msg) {
+  resultEl.innerHTML = `<div class="card error"><strong>Erreur :</strong> ${esc(msg)}</div>`;
+}
+
+function renderResult(input, resolved, def) {
+  const licensed = def.licensed || {};
+  const described = def.described || {};
+  const coords = def.coordinates || resolved.coords;
+
+  const declared = licensed.declared || "";
+  const discovered = (((licensed.facets || {}).core || {}).discovered || {}).expressions || [];
+  const attribution = (((licensed.facets || {}).core || {}).attribution || {}).parties || [];
+  const fileCount = (((licensed.facets || {}).core || {}) || {}).files;
+
+  const scores = licensed.score || {};
+  const effectiveScore = scores.effective;
+  const toolScore = (licensed.toolScore || {}).effective;
+
+  const source = described.sourceLocation;
+  const sourceStr = source
+    ? `${source.type}/${source.provider}/${source.namespace || "-"}/${source.name}${source.revision ? "@" + source.revision : ""}`
+    : null;
+  const sourceUrl = source && source.url;
+
+  const cdUiUrl = `https://clearlydefined.io/definitions/${buildCoordString(coords)}`;
+  const apiUrl = `https://api.clearlydefined.io/definitions/${buildCoordString(coords)}`;
+
+  const noData = !declared && discovered.length === 0 && !described.releaseDate;
+
+  resultEl.innerHTML = `
+    <div class="card">
+      <h2>Composant</h2>
+      <div class="row"><div class="label">Saisie</div><div class="value"><code>${esc(input)}</code></div></div>
+      <div class="row"><div class="label">PURL</div><div class="value"><code>${esc(resolved.purl)}</code></div></div>
+      <div class="row"><div class="label">Coordonnées CD</div><div class="value"><div class="coords">${esc(buildCoordString(coords))}</div></div></div>
+      <div class="row"><div class="label">Type / Provider</div><div class="value">${esc(coords.type)} / ${esc(coords.provider)}</div></div>
+      <div class="row"><div class="label">Nom</div><div class="value">${esc(coords.namespace === "-" ? "" : coords.namespace + "/")}${esc(coords.name)}</div></div>
+      <div class="row"><div class="label">Révision</div><div class="value"><code>${esc(coords.revision)}</code></div></div>
+    </div>
+
+    ${noData ? `
+    <div class="card">
+      <h2>Licence</h2>
+      <p style="color: var(--warn); margin: 0;">ClearlyDefined n'a pas (encore) de données indexées pour ce composant.
+      Vous pouvez demander une analyse sur <a href="${esc(cdUiUrl)}" target="_blank" rel="noopener">clearlydefined.io</a>.</p>
+    </div>
+    ` : `
+    <div class="card">
+      <h2>Licence</h2>
+      <div class="row">
+        <div class="label">Licence déclarée</div>
+        <div class="value"><span class="license-pill license-declared">${esc(declared || "Non déclarée")}</span></div>
+      </div>
+      <div class="row">
+        <div class="label">Licences détectées</div>
+        <div class="value">${discovered.length ? discovered.map(licensePill).join(" ") : '<span style="color: var(--muted);">Aucune</span>'}</div>
+      </div>
+      <div class="row">
+        <div class="label">Détenteurs de copyright</div>
+        <div class="value">${attribution.length
+          ? `<details><summary>${attribution.length} détecté(s)</summary><pre>${esc(attribution.join("\n"))}</pre></details>`
+          : '<span style="color: var(--muted);">Aucun</span>'}</div>
+      </div>
+      ${fileCount !== undefined ? `<div class="row"><div class="label">Fichiers analysés</div><div class="value">${esc(fileCount)}</div></div>` : ""}
+      ${effectiveScore !== undefined ? `<div class="row"><div class="label">Score de licence (effectif)</div><div class="value">${esc(effectiveScore)} / 100</div></div>` : ""}
+      ${toolScore !== undefined ? `<div class="row"><div class="label">Score des outils</div><div class="value">${esc(toolScore)} / 100</div></div>` : ""}
+    </div>
+
+    <div class="card">
+      <h2>Métadonnées</h2>
+      ${described.releaseDate ? `<div class="row"><div class="label">Date de publication</div><div class="value">${esc(described.releaseDate)}</div></div>` : ""}
+      ${described.projectWebsite ? `<div class="row"><div class="label">Site du projet</div><div class="value"><a href="${esc(described.projectWebsite)}" target="_blank" rel="noopener">${esc(described.projectWebsite)}</a></div></div>` : ""}
+      ${sourceStr ? `<div class="row"><div class="label">Source</div><div class="value">${sourceUrl ? `<a href="${esc(sourceUrl)}" target="_blank" rel="noopener">` : ""}<code>${esc(sourceStr)}</code>${sourceUrl ? "</a>" : ""}</div></div>` : ""}
+      ${described.issueTracker ? `<div class="row"><div class="label">Suivi des bugs</div><div class="value"><a href="${esc(described.issueTracker)}" target="_blank" rel="noopener">${esc(described.issueTracker)}</a></div></div>` : ""}
+    </div>
+    `}
+
+    <div class="card">
+      <h2>Liens</h2>
+      <div class="row"><div class="label">ClearlyDefined</div><div class="value"><a href="${esc(cdUiUrl)}" target="_blank" rel="noopener">${esc(cdUiUrl)}</a></div></div>
+      <div class="row"><div class="label">API (JSON brut)</div><div class="value"><a href="${esc(apiUrl)}" target="_blank" rel="noopener">${esc(apiUrl)}</a></div></div>
+    </div>
+
+    <div class="card">
+      <details>
+        <summary>Réponse JSON complète</summary>
+        <pre>${esc(JSON.stringify(def, null, 2))}</pre>
+      </details>
+    </div>
+  `;
+}
+
+/* =========================================================================
+ * Wiring
+ * ========================================================================= */
+const form = document.getElementById("search-form");
+const input = document.getElementById("query");
+const btn = document.getElementById("submit-btn");
+
+async function run(value) {
+  if (!value.trim()) return;
+  // Reflect in URL hash so results are shareable and reload-safe
+  const encoded = encodeURIComponent(value.trim());
+  if (location.hash !== `#q=${encoded}`) {
+    history.replaceState(null, "", `#q=${encoded}`);
+  }
+  btn.disabled = true;
+  renderLoading("Résolution des coordonnées…");
+  try {
+    const resolved = await resolve(value);
+    renderLoading(`Interrogation de ClearlyDefined (${buildCoordString(resolved.coords)})…`);
+    const def = await fetchDefinition(resolved.coordString);
+    renderResult(value, resolved, def);
+  } catch (e) {
+    renderError(e.message || String(e));
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  run(input.value);
+});
+
+document.querySelectorAll(".examples code[data-ex]").forEach(el => {
+  el.addEventListener("click", () => {
+    input.value = el.dataset.ex;
+    run(input.value);
+  });
+});
+
+// Load from hash on page load
+if (location.hash.startsWith("#q=")) {
+  const q = decodeURIComponent(location.hash.slice(3));
+  input.value = q;
+  run(q);
+}
+</script>
+</body>
+</html>

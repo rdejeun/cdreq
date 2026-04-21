@@ -345,6 +345,16 @@ function urlToPurl(input) {
     return `pkg:nuget/${segs[1]}${segs[2] ? `@${segs[2]}` : ""}`;
   }
 
+  // MVN Repository: https://mvnrepository.com/artifact/<group>/<name>/<version>
+  // (also accept the typo-variant mvrepository.com)
+  if ((host === "mvnrepository.com" || host === "mvrepository.com")
+      && segs[0] === "artifact" && segs.length >= 3) {
+    const group = segs[1];
+    const name = segs[2];
+    const version = segs[3] || "";
+    return `pkg:maven/${group}/${name}${version ? `@${version}` : ""}`;
+  }
+
   return null;
 }
 
